@@ -2,8 +2,6 @@ from rest_framework import serializers
 from django.core.exceptions import ValidationError
 from search_service.models import Cargo, Location, Car
 
-from geopy.distance import geodesic
-
 
 class LocationSerializer(serializers.ModelSerializer):
 
@@ -89,6 +87,7 @@ class CargoSerializer(serializers.ModelSerializer):
 class CarUpdateSerializer(serializers.ModelSerializer):
     zip_code = serializers.IntegerField(write_only=True)
     location = LocationSerializer(read_only=True)
+    uid = serializers.CharField(read_only=True)
 
     class Meta:
         model = Car

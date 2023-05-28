@@ -30,4 +30,4 @@ class CargoFactory(factory.django.DjangoModelFactory):
     pick_up_location = factory.SubFactory(LocationFactory)
     delivery_location = factory.SubFactory(LocationFactory)
     weight = 156.0
-    description = factory.Faker('lorem')
+    description = factory.Faker('paragraph')

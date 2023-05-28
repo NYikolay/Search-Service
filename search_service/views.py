@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
@@ -8,7 +8,8 @@ from search_service.filters import CargoFilterBackend
 from search_service.models import Cargo, Location, Car
 from search_service.serializers import CreateCargoSerializer, CargoListSerializer, CargoSerializer, \
     CarUpdateSerializer
-from search_service.services.closest_cars_count_service import calculate_closest_cars, get_cars_distance
+from search_service.services.cars_distance_service import get_cars_distance
+from search_service.services.closest_cars_count_service import calculate_closest_cars
 
 
 class CreateCargoView(CreateAPIView):
@@ -42,7 +43,10 @@ class CargoListView(ListAPIView):
         queryset = Cargo.objects.select_related('pick_up_location', 'delivery_location')
 
         for cargo in queryset:
-            cargo.closest_cars_count = calculate_closest_cars(cargo, self.cars_coordinates)
+            cargo.closest_cars_count = calculate_closest_cars(
+                (cargo.pick_up_location.latitude, cargo.pick_up_location.longitude),
+                self.cars_coordinates
+            )
 
         return queryset
 
@@ -54,7 +58,10 @@ class CargoViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.De
 
     def get_object(self):
         obj = get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
-        obj.cars_distance = get_cars_distance(obj, self.cars_data)
+        obj.cars_distance = get_cars_distance(
+            (obj.pick_up_location.latitude, obj.pick_up_location.longitude),
+            self.cars_data
+        )
 
         return obj
 

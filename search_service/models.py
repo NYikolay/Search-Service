@@ -1,6 +1,5 @@
-import random
-
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Car(models.Model):
@@ -11,7 +10,10 @@ class Car(models.Model):
         on_delete=models.SET_NULL,
         related_name='cars'
     )
-    load_capacity = models.FloatField()
+    load_capacity = models.FloatField(validators=[
+        MaxValueValidator(1000),
+        MinValueValidator(1)
+    ])
 
 
 class Location(models.Model):
@@ -35,6 +37,9 @@ class Cargo(models.Model):
         on_delete=models.SET_NULL,
         related_name='delivery_cargos'
     )
-    weight = models.FloatField()
+    weight = models.FloatField(validators=[
+        MaxValueValidator(1000),
+        MinValueValidator(1)
+    ])
     description = models.TextField()
 

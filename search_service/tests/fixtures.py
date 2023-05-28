@@ -6,17 +6,17 @@ from search_service.tests.factories import LocationFactory, CarFactory, CargoFac
 
 
 @pytest.fixture
-def filled_location_factory():
+def location_factory():
     return LocationFactory
 
 
 @pytest.fixture
-def filled_car_factory():
+def car_factory():
     return CarFactory
 
 
 @pytest.fixture
-def filled_cargo_factory():
+def cargo_factory():
     return CargoFactory
 
 
