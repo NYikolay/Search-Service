@@ -13,10 +13,11 @@ ___
 2. Создайте .env файл в папке config/.env. Заполните всеми необходимыми значениями (см. .env.dist)
 3. Для сборки проекта, находясь в корневой папке выполните в терминале команду: 
    - docker-compose -f docker-compose.yml --env-file config/.env up --build
-   - docker-compose -f docker-compose.yml --env-file config/.env  up -d --build - Чтобы запустить в фоновом режиме
+   - или docker-compose -f docker-compose.yml --env-file config/.env  up -d --build - Чтобы запустить в фоновом режиме
 4. Убедитесь, что контейнеры запущены командой docker ps
 5. Для создания суперпользователя:
    - docker exec -it welbex-rest python3 manage.py createsuperuser
+6. Перейдите в браузере по урлу http://127.0.0.1:8000/
 
 Чтобы остановить контейнеры используйте команду:
    - docker-compose -f docker-compose.yml down
