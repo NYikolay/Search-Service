@@ -11,6 +11,8 @@ from search_service.serializers import CreateCargoSerializer, CargoListSerialize
 from search_service.services.cars_distance_service import get_cars_distance
 from search_service.services.closest_cars_count_service import calculate_closest_cars
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 
 class CreateCargoView(CreateAPIView):
     queryset = Cargo.objects.select_related('pick_up_location', 'delivery_location')
@@ -33,19 +35,42 @@ class CreateCargoView(CreateAPIView):
 
 
 class CargoListView(ListAPIView):
-    cars_coordinates = Car.objects.values_list('location__latitude', 'location__longitude')
     serializer_class = CargoListSerializer
     filter_backends = [CargoFilterBackend]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="weight",
+                location=OpenApiParameter.QUERY,
+                description='Cargo weight',
+                required=False,
+                type=int
+            ),
+            OpenApiParameter(
+                name="miles",
+                location=OpenApiParameter.QUERY,
+                description='Miles of the nearest cars to the Cargo. '
+                            'All Cargo where the distance of Cars to that Cargo is <= miles will be output',
+                required=False,
+                type=int
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
-        # Если отправлять запрос в браузере через интерфейс DRF то он дублируется.
-        # При использовании json, postman и прочее, запрос будет один.
+        # Если отправлять запрос в браузере через интерфейс DRF то SQL запросы дублируются.
+        # При использовании json, postman и прочее, они дублироваться не будут.
+        # Проверить можно принтом тут же
+        cars_coordinates = Car.objects.values_list('location__latitude', 'location__longitude')
         queryset = Cargo.objects.select_related('pick_up_location', 'delivery_location')
 
         for cargo in queryset:
             cargo.closest_cars_count = calculate_closest_cars(
                 (cargo.pick_up_location.latitude, cargo.pick_up_location.longitude),
-                self.cars_coordinates
+                cars_coordinates
             )
 
         return queryset
@@ -53,14 +78,15 @@ class CargoListView(ListAPIView):
 
 class CargoViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, GenericViewSet):
     queryset = Cargo.objects.select_related('pick_up_location', 'delivery_location')
-    cars_data = Car.objects.values_list('uid', 'location__latitude', 'location__longitude')
     serializer_class = CargoSerializer
 
     def get_object(self):
+        cars_data = Car.objects.values_list('uid', 'location__latitude', 'location__longitude')
+
         obj = get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
         obj.cars_distance = get_cars_distance(
             (obj.pick_up_location.latitude, obj.pick_up_location.longitude),
-            self.cars_data
+            cars_data
         )
 
         return obj

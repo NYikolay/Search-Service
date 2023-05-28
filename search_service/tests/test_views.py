@@ -147,14 +147,14 @@ def test_put_cargo_view_set(api_client, cargo_factory):
         {
             "pick_up_location": cargo.pick_up_location,
             "delivery_location": cargo.delivery_location,
-            "weight": 1122,
+            "weight": 112,
             "description": "Test123"
         }
     )
 
     assert response.status_code == 200
     assert not Cargo.objects.filter(weight=cargo.weight, description=cargo.description).exists()
-    assert Cargo.objects.filter(weight=1122, description='Test123').exists()
+    assert Cargo.objects.filter(weight=112, description='Test123').exists()
 
 
 def test_car_update_view(api_client, car_factory, location_factory):
@@ -171,7 +171,7 @@ def test_car_update_view(api_client, car_factory, location_factory):
     car = car_factory()
     location = location_factory(zip=66103)
 
-    endpoint = f'/api/v1/car-update/{car.uid}/'
+    endpoint = f'/api/v1/update-car/{car.uid}/'
     response = client.put(
         endpoint,
         {

@@ -1,12 +1,11 @@
 from typing import Tuple
-from decimal import Decimal
 from typing import List
 
-from geopy.distance import geodesic
+from geopy import distance
 
 
 def calculate_closest_cars(
-        cargo_coordinates: Tuple[Decimal, Decimal],
+        cargo_coordinates: Tuple[float, float],
         cars_coordinates: List[tuple]
 ) -> int:
     """
@@ -26,8 +25,8 @@ def calculate_closest_cars(
     closest_cars_count: int = 0
 
     for car_coordinate in cars_coordinates:
-        distance: float = geodesic(cargo_coordinates, car_coordinate).miles
-        if distance <= 450:
+        distance_dt = distance.distance(cargo_coordinates, car_coordinate).miles
+        if distance_dt <= 450:
             closest_cars_count += 1
 
     return closest_cars_count

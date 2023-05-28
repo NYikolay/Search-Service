@@ -9,11 +9,11 @@ pytestmark = pytest.mark.django_db
 
 
 def test_get_cars_distance():
-    cargo_coordinates = (Decimal('18.418780000000000'), Decimal('-66.667900000000000'))
+    cargo_coordinates = (18.41878, -66.6679)
     cars_data = [
-        ('9430R', Decimal('41.480090000000000'), Decimal('-87.729810000000000')),
-        ('8874I', Decimal('45.572230000000000'), Decimal('-116.823840000000000')),
-        ('2238U', Decimal('43.697970000000000'), Decimal('-85.482720000000000'))
+        ('9430R', 41.48009, -87.72981),
+        ('8874I', 45.57223, -116.82384),
+        ('2238U', 43.69797, -85.48272)
     ]
 
     expected_cars_distance = [
@@ -28,12 +28,12 @@ def test_get_cars_distance():
 
 
 def test_calculate_closest_cars():
-    cargo_coordinates = (Decimal('18.418780000000000'), Decimal('-66.667900000000000'))
+    cargo_coordinates = (18.41878, -66.6679)
     cars_coordinates = [
-        (Decimal('18.134120000000000'), Decimal('-67.113990000000000')),
-        (Decimal('45.572230000000000'), Decimal('-116.823840000000000')),
-        (Decimal('18.270190000000000'), Decimal('-66.867270000000000')),
-        (Decimal('42.272020000000000'), Decimal('-85.498930000000000'))
+        (18.13412, -67.11399),
+        (45.57223, -116.82384),
+        (18.27019, -66.86727),
+        (42.27202, -85.49893)
     ]
 
     closest_cars = calculate_closest_cars(cargo_coordinates, cars_coordinates)
