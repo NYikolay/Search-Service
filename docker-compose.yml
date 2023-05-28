@@ -34,6 +34,11 @@ services:
       - config/.env
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/api/v1/cargos/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
   redis:
     image: redis:6.0.17
     container_name: welbex_redis
@@ -48,9 +53,8 @@ services:
     env_file:
       - config/.env
     depends_on:
-      - redis
       - welbex_web
-      - db
+      - redis
   celery-beat:
     build:
       dockerfile: Dockerfile
@@ -62,9 +66,9 @@ services:
     env_file:
       - config/.env
     depends_on:
-      - redis
-      - welbex_web
-      - db
+      welbex_web:
+        condition: service_healthy
+
 
 
 volumes:
