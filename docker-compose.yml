@@ -35,7 +35,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8000/api/v1/cargos/ || exit 1"]
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health-check-status/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
