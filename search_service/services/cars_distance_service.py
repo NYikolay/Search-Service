@@ -24,5 +24,3 @@ def get_cars_distance(cargo_coordinates: Tuple[float, float], cars_data: List[tu
 
     return car_distance_list
 
-
-# def get_is_valid_filter_cars_distance()
